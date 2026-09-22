@@ -3,6 +3,8 @@
 A minimal Next.js proof of concept for signing in with Dynamic and viewing the
 authenticated user's Midnight wallet on Preview.
 
+Live deployment: [midnight-dynamic-wallet-poc.vercel.app](https://midnight-dynamic-wallet-poc.vercel.app)
+
 The profile deliberately displays only values returned by the active Midnight
 wallet:
 

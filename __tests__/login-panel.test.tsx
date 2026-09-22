@@ -1,8 +1,15 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   isLoggedIn: false,
+  reinitialize: vi.fn(),
   replace: vi.fn(),
   sdkHasLoaded: true,
 }));
@@ -11,6 +18,7 @@ vi.mock("@dynamic-labs/sdk-react-core", () => ({
   DynamicEmbeddedWidget: () => <div>Dynamic authentication</div>,
   useDynamicContext: () => ({ sdkHasLoaded: mocks.sdkHasLoaded }),
   useIsLoggedIn: () => mocks.isLoggedIn,
+  useReinitialize: () => mocks.reinitialize,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -22,8 +30,13 @@ import { LoginPanel } from "@/components/auth/login-panel";
 describe("LoginPanel", () => {
   beforeEach(() => {
     mocks.isLoggedIn = false;
+    mocks.reinitialize.mockReset();
     mocks.replace.mockReset();
     mocks.sdkHasLoaded = true;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("renders Dynamic's configured authentication methods", () => {
@@ -40,6 +53,25 @@ describe("LoginPanel", () => {
 
     expect(screen.getByText("Loading…")).toBeTruthy();
     expect(screen.queryByText("Dynamic authentication")).toBeNull();
+  });
+
+  it("offers a bounded retry when Dynamic does not finish loading", async () => {
+    vi.useFakeTimers();
+    mocks.sdkHasLoaded = false;
+
+    render(<LoginPanel />);
+
+    expect(
+      screen.queryByRole("button", { name: "Retry authentication" }),
+    ).toBeNull();
+
+    await act(() => vi.advanceTimersByTimeAsync(10_000));
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Retry authentication" }),
+    );
+
+    expect(mocks.reinitialize).toHaveBeenCalledOnce();
   });
 
   it("redirects an authenticated user to the wallet", async () => {

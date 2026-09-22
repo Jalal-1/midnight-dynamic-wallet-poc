@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #050505;
+  --muted: #686868;
+  --line: #e7e7e7;
+  --accent: #0000fe;
+  --panel: #f7f7f5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-panel: var(--panel);
+  --font-sans: "Outfit Variable", "Outfit", sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Outfit Variable", "Outfit", sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-action {
+  border-bottom: 1px solid transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding-block: 0.25rem;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.header-action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.midnight-mark {
+  filter: drop-shadow(0 2rem 4rem rgb(0 0 254 / 12%));
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
